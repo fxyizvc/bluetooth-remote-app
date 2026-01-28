@@ -5,12 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Input
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PowerSettingsNew
@@ -23,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,28 +52,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RemoteLayout(modifier: Modifier = Modifier) {
-    // The main container for the remote
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF1E1E1E)) // Dark grey background like the remote
-            .verticalScroll(rememberScrollState()) // Allow scrolling if screen is small
-            .padding(24.dp), // Added slightly more padding for look
+            .background(Color(0xFF1E1E1E))
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(30.dp) // Space between major sections
+        verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        // --- Section 1: Header (Power, Input, etc) ---
+        // --- Section 1: Header ---
         TopSection()
 
-        // --- Section 2: Navigation (The Circle) ---
-        // Placeholder for now
-        Box(
-            modifier = Modifier
-                .size(220.dp)
-                .background(Color.DarkGray, CircleShape)
-        ) {
-            Text("Navigation Pad", color = Color.White, modifier = Modifier.align(Alignment.Center))
-        }
+        // --- Section 2: Navigation (The Real D-Pad) ---
+        NavigationPad()
 
         // --- Section 3: Vol/Ch ---
         Text(text = "Volume / Channel / Home", color = Color.Gray)
@@ -78,86 +76,101 @@ fun RemoteLayout(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun NavigationPad() {
+    // This Box acts as the outer white circle
+    Box(
+        modifier = Modifier
+            .size(220.dp) // Size of the whole D-Pad
+            .background(Color(0xFFE0E0E0), CircleShape) // Light grey/white color
+    ) {
+        // 1. UP Arrow (Aligned Top Center)
+        IconButton(
+            onClick = { /* TODO: Send UP command */ },
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 10.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowUp, "Up", tint = Color.Black)
+        }
+
+        // 2. DOWN Arrow (Aligned Bottom Center)
+        IconButton(
+            onClick = { /* TODO: Send DOWN command */ },
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowDown, "Down", tint = Color.Black)
+        }
+
+        // 3. LEFT Arrow (Aligned Center Start)
+        IconButton(
+            onClick = { /* TODO: Send LEFT command */ },
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 10.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowLeft, "Left", tint = Color.Black)
+        }
+
+        // 4. RIGHT Arrow (Aligned Center End)
+        IconButton(
+            onClick = { /* TODO: Send RIGHT command */ },
+            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 10.dp)
+        ) {
+            Icon(Icons.Default.KeyboardArrowRight, "Right", tint = Color.Black)
+        }
+
+        // 5. CENTER OK Button (Aligned Center)
+        // We reuse our RemoteButton but make it bigger and Black
+        RemoteButton(
+            icon = androidx.compose.material.icons.Icons.Default.Input, // Using Input temporarily as "OK" usually text, we can fix later
+            contentDescription = "OK",
+            backgroundColor = Color(0xFF1E1E1E), // Black/Dark Grey
+            tint = Color.White,
+            size = 90.dp, // The inner circle size
+            modifier = Modifier.align(Alignment.Center)
+        )
+        // Note: The icon inside OK is usually text "OK", we will swap icon for text in next phase.
+    }
+}
+
+@Composable
 fun TopSection() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Row 1: Power (Left) and Input (Right)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Power Button (Red)
-            RemoteButton(
-                icon = Icons.Filled.PowerSettingsNew,
-                contentDescription = "Power",
-                tint = Color.Red,
-                backgroundColor = Color(0xFF2D2D2D)
-            )
-
-            // Input Button
-            RemoteButton(
-                icon = Icons.Filled.Input,
-                contentDescription = "Input",
-                backgroundColor = Color(0xFF2D2D2D)
-            )
+            RemoteButton(Icons.Default.PowerSettingsNew, "Power", tint = Color.Red)
+            RemoteButton(Icons.Default.Input, "Input")
         }
-
-        // Row 2: Profile - Assistant - Settings
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Profile (Small)
-            RemoteButton(
-                icon = Icons.Filled.Person,
-                contentDescription = "Profile",
-                size = 40.dp
-            )
-
-            // Google Assistant (Big White)
-            RemoteButton(
-                icon = Icons.Filled.Mic,
-                contentDescription = "Assistant",
-                backgroundColor = Color.White, // White background
-                tint = Color.Black,          // Black icon
-                size = 64.dp                 // Prominent size
-            )
-
-            // Settings (Small)
-            RemoteButton(
-                icon = Icons.Filled.Settings,
-                contentDescription = "Settings",
-                size = 40.dp
-            )
+            RemoteButton(Icons.Default.Person, "Profile", size = 40.dp)
+            RemoteButton(Icons.Default.Mic, "Assistant", backgroundColor = Color.White, tint = Color.Black, size = 64.dp)
+            RemoteButton(Icons.Default.Settings, "Settings", size = 40.dp)
         }
     }
 }
 
-// Reusable Button Component
 @Composable
 fun RemoteButton(
     icon: ImageVector,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xFF2D2D2D), // Default dark grey
-    tint: Color = Color.White,                 // Default white icon
-    size: Dp = 48.dp                           // Default size
+    backgroundColor: Color = Color(0xFF2D2D2D),
+    tint: Color = Color.White,
+    size: Dp = 48.dp
 ) {
     IconButton(
-        onClick = { /* TODO: Add Bluetooth Logic Later */ },
+        onClick = { },
         modifier = modifier
             .size(size)
             .background(backgroundColor, CircleShape),
         colors = IconButtonDefaults.iconButtonColors(contentColor = tint)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            modifier = Modifier.padding(8.dp) // Padding inside the circle
-        )
+        Icon(imageVector = icon, contentDescription = contentDescription)
     }
 }
 
