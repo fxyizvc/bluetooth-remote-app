@@ -24,59 +24,26 @@ class BluetoothHidService : Service() {
 
     // --- 1. THE COMPOSITE MAP (Keyboard + Consumer Control) ---
     private val HID_REPORT_DESC = byteArrayOf(
-        // --- KEYBOARD (Report ID 1) ---
-        0x05.toByte(), 0x01.toByte(),       // Usage Page (Generic Desktop)
-        0x09.toByte(), 0x06.toByte(),       // Usage (Keyboard)
-        0xA1.toByte(), 0x01.toByte(),       // Collection (Application)
-        0x85.toByte(), 0x01.toByte(),       //   Report ID (1)
-        0x05.toByte(), 0x07.toByte(),       //   Usage Page (Key Codes)
-        0x19.toByte(), 0xE0.toByte(),       //   Usage Min (224)
-        0x29.toByte(), 0xE7.toByte(),       //   Usage Max (231)
-        0x15.toByte(), 0x00.toByte(),       //   Logical Min (0)
-        0x25.toByte(), 0x01.toByte(),       //   Logical Max (1)
-        0x75.toByte(), 0x01.toByte(),       //   Report Size (1)
-        0x95.toByte(), 0x08.toByte(),       //   Report Count (8)
-        0x81.toByte(), 0x02.toByte(),       //   Input (Data, Var, Abs) - Modifiers
-        0x95.toByte(), 0x01.toByte(),       //   Report Count (1)
-        0x75.toByte(), 0x08.toByte(),       //   Report Size (8)
-        0x81.toByte(), 0x03.toByte(),       //   Input (Cnst, Var, Abs) - Reserved
-        0x95.toByte(), 0x05.toByte(),       //   Report Count (5)
-        0x75.toByte(), 0x01.toByte(),       //   Report Size (1)
-        0x05.toByte(), 0x08.toByte(),       //   Usage Page (LEDs)
-        0x19.toByte(), 0x01.toByte(),       //   Usage Min (1)
-        0x29.toByte(), 0x05.toByte(),       //   Usage Max (5)
-        0x91.toByte(), 0x02.toByte(),       //   Output (Data, Var, Abs) - LEDs
-        0x95.toByte(), 0x01.toByte(),       //   Report Count (1)
-        0x75.toByte(), 0x03.toByte(),       //   Report Size (3)
-        0x91.toByte(), 0x03.toByte(),       //   Output (Cnst, Var, Abs) - Padding
-        0x95.toByte(), 0x06.toByte(),       //   Report Count (6)
-        0x75.toByte(), 0x08.toByte(),       //   Report Size (8)
-        0x15.toByte(), 0x00.toByte(),       //   Logical Min (0)
-        0x25.toByte(), 0x65.toByte(),       //   Logical Max (101)
-        0x05.toByte(), 0x07.toByte(),       //   Usage Page (Key Codes)
-        0x19.toByte(), 0x00.toByte(),       //   Usage Min (0)
-        0x29.toByte(), 0x65.toByte(),       //   Usage Max (101)
-        0x81.toByte(), 0x00.toByte(),       //   Input (Data, Array) - Key arrays
-        0xC0.toByte(),                      // End Collection (Keyboard)
-
-        // --- CONSUMER CONTROL (Report ID 2) - For Volume/Power/Home ---
-        0x05.toByte(), 0x0C.toByte(),       // Usage Page (Consumer)
-        0x09.toByte(), 0x01.toByte(),       // Usage (Consumer Control)
-        0xA1.toByte(), 0x01.toByte(),       // Collection (Application)
-        0x85.toByte(), 0x02.toByte(),       //   Report ID (2)
-        0x15.toByte(), 0x00.toByte(),       //   Logical Min (0)
-        0x26.toByte(), 0x3C.toByte(), 0x02.toByte(), //   Logical Max (572)
-        0x19.toByte(), 0x00.toByte(),       //   Usage Min (0)
-        0x2A.toByte(), 0x3C.toByte(), 0x02.toByte(), //   Usage Max (572)
-        0x75.toByte(), 0x10.toByte(),       //   Report Size (16)
-        0x95.toByte(), 0x01.toByte(),       //   Report Count (1)
-        0x81.toByte(), 0x00.toByte(),       //   Input (Data, Array, Abs)
-        0xC0.toByte()                       // End Collection (Consumer)
+        // Keyboard (ID 1)
+        0x05.toByte(), 0x01.toByte(), 0x09.toByte(), 0x06.toByte(), 0xA1.toByte(), 0x01.toByte(), 0x85.toByte(), 0x01.toByte(),
+        0x05.toByte(), 0x07.toByte(), 0x19.toByte(), 0xE0.toByte(), 0x29.toByte(), 0xE7.toByte(), 0x15.toByte(), 0x00.toByte(),
+        0x25.toByte(), 0x01.toByte(), 0x75.toByte(), 0x01.toByte(), 0x95.toByte(), 0x08.toByte(), 0x81.toByte(), 0x02.toByte(),
+        0x95.toByte(), 0x01.toByte(), 0x75.toByte(), 0x08.toByte(), 0x81.toByte(), 0x03.toByte(), 0x95.toByte(), 0x05.toByte(),
+        0x75.toByte(), 0x01.toByte(), 0x05.toByte(), 0x08.toByte(), 0x19.toByte(), 0x01.toByte(), 0x29.toByte(), 0x05.toByte(),
+        0x91.toByte(), 0x02.toByte(), 0x95.toByte(), 0x01.toByte(), 0x75.toByte(), 0x03.toByte(), 0x91.toByte(), 0x03.toByte(),
+        0x95.toByte(), 0x06.toByte(), 0x75.toByte(), 0x08.toByte(), 0x15.toByte(), 0x00.toByte(), 0x25.toByte(), 0x65.toByte(),
+        0x05.toByte(), 0x07.toByte(), 0x19.toByte(), 0x00.toByte(), 0x29.toByte(), 0x65.toByte(), 0x81.toByte(), 0x00.toByte(),
+        0xC0.toByte(),
+        // Consumer Control (ID 2)
+        0x05.toByte(), 0x0C.toByte(), 0x09.toByte(), 0x01.toByte(), 0xA1.toByte(), 0x01.toByte(), 0x85.toByte(), 0x02.toByte(),
+        0x15.toByte(), 0x00.toByte(), 0x26.toByte(), 0x3C.toByte(), 0x02.toByte(), 0x19.toByte(), 0x00.toByte(), 0x2A.toByte(),
+        0x3C.toByte(), 0x02.toByte(), 0x75.toByte(), 0x10.toByte(), 0x95.toByte(), 0x01.toByte(), 0x81.toByte(), 0x00.toByte(),
+        0xC0.toByte()
     )
 
     private val callback = object : BluetoothHidDevice.Callback() {
         override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
-            Log.d("HisenseHID", "🔥🔥🔥 APP STATUS CHANGED: Registered = $registered 🔥🔥🔥")
+            Log.d("HisenseHID", "🔥🔥🔥 APP STATUS CHANGED: Registered = $registered")
         }
 
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
@@ -87,7 +54,7 @@ class BluetoothHidService : Service() {
                 }
                 BluetoothProfile.STATE_CONNECTING -> "CONNECTING"
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    hostDevice = null
+                    // Do not nullify hostDevice immediately so we can try to reconnect
                     "DISCONNECTED"
                 }
                 else -> "UNKNOWN"
@@ -118,51 +85,63 @@ class BluetoothHidService : Service() {
         if (hidDevice == null) return
 
         val sdpSettings = BluetoothHidDeviceAppSdpSettings(
-            "Hisense Remote",
-            "Android Remote",
-            "FayizVC",
-            0xC0.toByte(),
-            HID_REPORT_DESC
+            "Hisense Remote", "Android Remote", "FayizVC", 0xC0.toByte(), HID_REPORT_DESC
         )
 
         hidDevice?.registerApp(sdpSettings, null, null, executor, callback)
     }
 
-    // --- FUNCTION 1: SEND STANDARD KEYS (Arrows, OK, Back) ---
+    // --- CRASH PROOF CONNECT FUNCTION ---
+    @SuppressLint("MissingPermission")
+    fun connectToDevice(device: BluetoothDevice) {
+        if (hidDevice == null) {
+            Log.e("HisenseHID", "❌ Service not ready. Cannot connect.")
+            return
+        }
+
+        try {
+            Log.d("HisenseHID", "Trying to connect to: ${device.name}")
+            // This is the line that was crashing. Now it's safe.
+            hidDevice?.connect(device)
+            // Also update our host device target immediately
+            hostDevice = device
+        } catch (e: Exception) {
+            Log.e("HisenseHID", "❌ Crash prevented during connect: ${e.message}")
+        }
+    }
+
     @SuppressLint("MissingPermission")
     fun sendKeyboardCommand(keyCode: Int) {
         val target = hostDevice ?: return
         if (hidDevice == null) return
 
-        val pressReport = ByteArray(8)
-        pressReport[2] = keyCode.toByte()
-        hidDevice?.sendReport(target, 1, pressReport) // Report ID 1
-
-        val releaseReport = ByteArray(8)
-        hidDevice?.sendReport(target, 1, releaseReport) // Report ID 1
+        try {
+            val pressReport = ByteArray(8).apply { this[2] = keyCode.toByte() }
+            hidDevice?.sendReport(target, 1, pressReport)
+            hidDevice?.sendReport(target, 1, ByteArray(8)) // Release
+        } catch (e: Exception) {
+            Log.e("HisenseHID", "Error sending key: ${e.message}")
+        }
     }
 
-    // --- FUNCTION 2: SEND MEDIA KEYS (Volume, Mute, Power) ---
     @SuppressLint("MissingPermission")
     fun sendConsumerCommand(usageCode: Int) {
         val target = hostDevice ?: return
         if (hidDevice == null) return
 
-        // Consumer Report Structure: ID(2) + UsageCode(Low Byte) + UsageCode(High Byte)
-        val pressReport = ByteArray(2)
-        pressReport[0] = (usageCode and 0xFF).toByte()
-        pressReport[1] = ((usageCode shr 8) and 0xFF).toByte()
-
-        hidDevice?.sendReport(target, 2, pressReport) // Report ID 2
-        Log.d("HisenseHID", "🔊 Sent Media Key: $usageCode")
-
-        // Release
-        val releaseReport = ByteArray(2) // 00 00
-        hidDevice?.sendReport(target, 2, releaseReport) // Report ID 2
+        try {
+            val pressReport = ByteArray(2).apply {
+                this[0] = (usageCode and 0xFF).toByte()
+                this[1] = ((usageCode shr 8) and 0xFF).toByte()
+            }
+            hidDevice?.sendReport(target, 2, pressReport)
+            hidDevice?.sendReport(target, 2, ByteArray(2)) // Release
+        } catch (e: Exception) {
+            Log.e("HisenseHID", "Error sending media: ${e.message}")
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder = binder
-
     inner class LocalBinder : Binder() {
         fun getService(): BluetoothHidService = this@BluetoothHidService
     }
