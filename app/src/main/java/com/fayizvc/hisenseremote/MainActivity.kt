@@ -59,10 +59,16 @@ import com.fayizvc.hisenseremote.ui.theme.HisenseRemoteTheme
 
 object KeyMap {
     const val UP = 82; const val DOWN = 81; const val LEFT = 80; const val RIGHT = 79
-    const val ENTER = 40; const val BACK = 42
+    const val ENTER = 40
+    // Changed BACK to 41 (Escape) - works universally as Back on Android TV
+    const val BACK = 41
     const val NETFLIX = 58; const val YOUTUBE = 59; const val PRIME = 60; const val MEDIA = 61
     const val VOL_UP = 233; const val VOL_DOWN = 234; const val MUTE = 226
-    const val POWER = 48; const val HOME = 521
+    const val POWER = 48
+    // Changed HOME to 547 (0x223 AC Home) - standard Home command
+    const val HOME = 547
+    // FIX: Using F5 (62) for Settings - requires Button Mapper on TV if native fails
+    const val SETTINGS = 62
 }
 
 class MainActivity : ComponentActivity() {
@@ -169,7 +175,12 @@ fun TopSection(onVibrate: () -> Unit) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
             RemoteButton(Icons.Default.Person, "Profile", size = 40.dp, onClick = onVibrate)
             RemoteButton(Icons.Default.Mic, "Assistant", backgroundColor = Color.White, tint = Color.Black, size = 64.dp, onClick = onVibrate)
-            RemoteButton(Icons.Default.Settings, "Settings", size = 40.dp, onClick = onVibrate)
+            // WIRED SETTINGS BUTTON
+            RemoteButton(Icons.Default.Settings, "Settings", size = 40.dp, onClick = {
+                onVibrate()
+                // FIX: Send Keyboard Command (F5 / 62) for Settings
+                activity?.bluetoothService?.sendKeyboardCommand(KeyMap.SETTINGS)
+            })
         }
     }
 }
@@ -193,7 +204,9 @@ fun ControlRow(onVibrate: () -> Unit) {
     fun sendKey(code: Int) { onVibrate(); activity?.bluetoothService?.sendKeyboardCommand(code) }
     fun sendMedia(code: Int) { onVibrate(); activity?.bluetoothService?.sendConsumerCommand(code) }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        // Updated Back Button to use sendKey (Keyboard Back/Escape)
         IconButton(onClick = { sendKey(KeyMap.BACK) }, modifier = Modifier.size(40.dp).background(Color(0xFF2D2D2D), CircleShape)) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White) }
+        // Updated Home Button to use sendMedia (Consumer Home)
         IconButton(onClick = { sendMedia(KeyMap.HOME) }, modifier = Modifier.size(48.dp).background(Color.White, CircleShape)) { Icon(Icons.Default.Home, "Home", tint = Color.Black) }
         RemoteButton(Icons.Default.Tv, "TV", size = 40.dp, onClick = onVibrate)
     }
