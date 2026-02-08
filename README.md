@@ -10,7 +10,7 @@ Unlike traditional Wi-Fi remotes, this app uses the **Bluetooth HID (Human Inter
 ## 🖼️ Preview
 
 <p align="center">
-  <img src="https://via.placeholder.com/300x600?text=App+Screenshot" alt="Remote UI" width="260"/>
+  <img src="https://github.com/user-attachments/assets/c8583065-a1b6-4d58-aad1-d021fefa5ce4" alt="Remote UI" width="260"/>
 </p>
 
 ---
